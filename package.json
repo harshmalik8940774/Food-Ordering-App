@@ -1,0 +1,22 @@
+{
+  "name": "food-ordering-app",
+  "version": "1.0.0",
+  "description": "this is the app for ordering the food online",
+  "scripts": {
+    "test": "jest",
+    "dev": "parcel index.html --open"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/harshmalik8940774/Food-Ordering-App.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/harshmalik8940774/Food-Ordering-App/issues"
+  },
+  "homepage": "https://github.com/harshmalik8940774/Food-Ordering-App#readme",
+  "devDependencies": {
+    "parcel": "^2.15.4"
+  }
+}
