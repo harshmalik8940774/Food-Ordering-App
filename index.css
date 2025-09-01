@@ -184,3 +184,24 @@ border: 1px solid black;
   color: #fff;
 }
 
+.shimmer-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.shimmer-card {
+  width: 220px;
+  height: 300px;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  
+      /* stack placeholder elements vertically */
+  overflow: hidden;
+  
+  padding: 10px;
+  gap: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+
