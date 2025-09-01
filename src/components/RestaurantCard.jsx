@@ -1,20 +1,21 @@
 import { CDN_URL } from "../utils/constants";
-import resList from "../utils/mockData";
-
-const RestaurantCard = (props) => {
-  const { resData } = props; // ✅ destructure props inside
+const RestaurantCard = ({ resData }) => {
+  // destructure directly (API always has info object)
+  const { cloudinaryImageId, name, avgRating, cuisines, costForTwo, sla } =
+    resData?.info;
 
   return (
     <div className="res-card" style={{ backgroundColor: "#f0f0f0" }}>
       <img
         className="res-logo"
         alt="res-logo"
-        src={CDN_URL} // ✅ append image id
+        src={CDN_URL + cloudinaryImageId}
       />
-      <h3>{resData.resName}</h3>
-      <h4>{resData.cuisine}</h4>
-      <h4>{ resData.rating}</h4>
-      <h4>38 minutes</h4>
+      <h3>{name}</h3>
+      <h4>{cuisines.join(", ")}</h4>
+      <h4>⭐ {avgRating}</h4>
+      <h4>{costForTwo}</h4>
+      <h4>{sla?.deliveryTime} mins</h4>
     </div>
   );
 };
