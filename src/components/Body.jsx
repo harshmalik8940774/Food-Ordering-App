@@ -1,71 +1,16 @@
-// import RestaurantCard from "./RestaurantCard.jsx";
-// import resList from "../utils/mockData";
-// import { useEffect, useState } from "react";
-// import Shimmer from "./Shimmer.jsx";
-
-
-// const Body = () => {
-//   const [listOfRestaurants, setListOfRestaurant] = useState();
-
-//   const [searchText, setSearchText] = useState("");
-
-//   //live api call
-//   useEffect(() => {
-//     fetchData();
-//   }, [])
-  
-//   const fetchData = async () => {
-//     const data = await fetch(
-//       "`https://instafood.onrender.com/api/restaurants?lat=12.9352&lng=77.6245`"
-//     );
-//     const json = await data.json();
-//     setListOfRestaurant(
-//       json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle?.restaurants
-//     );
-//   };
-//   // conditional rendiring
-//   // if (listOfRestaurants.length == 0) {
-//   //   return <Shimmer/>
-//   // }
-//   return listOfRestaurants.length == 0 ? <Shimmer/> : (
-//     <div className="body">
-//       <div className="filter">
-//         <div className="search">
-//           <input type="text" className="search-box" value={setSearchText} onChange={(e) => {
-//             setSearchText(e.target.value);
-//           }}></input>
-//           <btn onClick={() => {
-//             const filterRestaurant = listOfRestaurants.filter((res) => res.data.name.toLowerCase().includes(searchText.toLowerCase()))
-//             setListOfRestaurant = filterRestaurant;
-//           }}>button</btn>
-//         </div>
-//         <button className="filter-btn" onClick={() => {
-//           const filteredList = listOfRestaurants.filter((res) => res.rating > 4);
-//           setListOfRestaurant(filteredList);
-//         }}>
-//           Top Rated Restaurants
-//         </button>
-//       </div>
-//       <div className="res-container">
-
-//         {listOfRestaurants.map((resturant) => (
-//           <RestaurantCard key={resturant.id} resData={resturant} />
-//         ))}
-//       </div>m
-//     </div>
-//   );
-// };
-
-// export default Body;
- 
-
-import RestaurantCard from "./RestaurantCard.jsx";
+import RestaurantCard,{witPromotedLabel} from "./RestaurantCard.jsx";
 import { useEffect, useState } from "react";
 import Shimmer from "./Shimmer.jsx";
+import { Link } from "react-router-dom";
+import userOnlineStatus from "../utils/useOnlineStatus.jsx";
 
 const Body = () => {
-  const [listOfRestaurants, setListOfRestaurant] = useState([]);
+  const [listOfRestaurants, setListOfRestaurants] = useState([]);
+
+   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
   const [searchText, setSearchText] = useState("");
+
+  const RestaurantCardPromoted = witPromotedLabel(RestaurantCard);
 
   // live api call
   useEffect(() => {
@@ -82,32 +27,47 @@ const Body = () => {
       json?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle
         ?.restaurants ;
 
-    setListOfRestaurant(restaurants);
+    setListOfRestaurants(restaurants);
+    setFilteredRestaurants(restaurants);
+
   };
 
-  // conditional rendering with shimmer
-  if (listOfRestaurants.length === 0) {
-    return <Shimmer />;
+  const onlineStatus = userOnlineStatus();
+
+  if (onlineStatus == false) {
+    return (
+      <h1>
+        Looks like you're offline!! Please check your internet connection
+      </h1>
+    )
   }
 
-  return (
+
+
+  // conditional rendering with shimmer
+ 
+
+  return listOfRestaurants.length == 0 ? (
+    <Shimmer />
+  ) : (
     <div className="body">
       <div className="filter">
         <div className="search">
           <input
             type="text"
             className="search-box"
-            value={searchText}
+            value={searchText} // binding input with local state variable
             onChange={(e) => setSearchText(e.target.value)}
           />
           <button
             onClick={() => {
+              // filter the Restaurant and Update the UI
               const filteredRestaurants = listOfRestaurants.filter((res) =>
                 res?.info?.name
                   ?.toLowerCase()
                   .includes(searchText.toLowerCase())
               );
-              setListOfRestaurant(filteredRestaurants);
+              setFilteredRestaurants(filteredRestaurants);
             }}
           >
             Search
@@ -120,7 +80,7 @@ const Body = () => {
             const filteredList = listOfRestaurants.filter(
               (res) => res?.info?.avgRating > 4
             );
-            setListOfRestaurant(filteredList);
+            setFilteredRestaurants(filteredList);
           }}
         >
           Top Rated Restaurants
@@ -128,12 +88,36 @@ const Body = () => {
       </div>
 
       <div className="res-container">
-        {listOfRestaurants.map((restaurant) => (
-          <RestaurantCard key={restaurant?.info?.id} resData={restaurant} />
+        {filteredRestaurants.map((restaurant) => (
+          <Link
+            key={restaurant.data.id}
+            to={"/restaurants/" + restaurant.data.id}
+          >
+            {/* <RestaurantCard resData={restaurant} /> */}
+            {restaurant.data.promotes ? (
+              <RestaurantCardPromoted resData={restaurant} />
+            ) : (
+              <RestaurantCard resData={restaurant} />
+            )}
+          </Link>
         ))}
       </div>
+      {/* <div className="res-container">
+        {filteredRestaurants.map((restaurant) => {
+          const resId = restaurant?.info?.id; // safe optional chaining
+          if (!resId) return null; // skip if id is missing
+
+          return (
+            <Link key={resId} to={`/restaurants/${resId}`}>
+              <RestaurantCard resData={restaurant} />
+            </Link>
+          );
+        })}
+      </div> */}
     </div>
   );
 };
 
 export default Body;
+
+

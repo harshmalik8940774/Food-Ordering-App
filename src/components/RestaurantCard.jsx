@@ -20,4 +20,21 @@ const RestaurantCard = ({ resData }) => {
   );
 };
 
+// high oorder componet
+
+const withPromotedLabel = (RestaurantCard) => {
+  return (
+        
+    (props) => {
+      return (
+        <div>
+          <label className="absolute bg-black text-white" >Promoted</label>
+          <RestaurantCard {...props} />
+        </div>
+      )
+    }
+  )
+}
+
+
 export default RestaurantCard;
